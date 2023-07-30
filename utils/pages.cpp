@@ -36,14 +36,23 @@ void registrationPage(string &page, bool* usernameBloomBit, bool* weakPassBloomB
     cout << "Enter your username and password" << endl;
     cout << "- Username must 6-9 characters, not contain space" << endl;
     cout << "- Password must 11-19 characters, not contain space, include uppercase, lowercase, numbers and special characters" << endl;
-    
+    cout << endl << "Type /back to go back" << endl;
+
     cout << "--------------------" << endl;
 
     User user;
     cout << "Enter your username: ";
     getline(cin, user.username);
+    if (user.username == "/back") {
+        page = "Main menu";
+        return;
+    }
     cout << "Enter your password: ";
     getline(cin, user.password);
+    if (user.password == "/back") {
+        page = "Main menu";
+        return;
+    }
 
     if (signup(user, usernameBloomBit, weakPassBloomBit)) {
         cout << "--------------------" << endl;
@@ -60,6 +69,7 @@ void multipleRegistrationPage(string &page, bool* usernameBloomBit, bool* weakPa
     cout << "Enter your username and password" << endl;
     cout << "- Username must 6-9 characters, not contain space" << endl;
     cout << "- Password must 11-19 characters, not contain space, include uppercase, lowercase, numbers and special characters" << endl;
+    cout << endl << "Type /back to go back" << endl;
     
     cout << "--------------------" << endl;
     string n;
@@ -67,6 +77,10 @@ void multipleRegistrationPage(string &page, bool* usernameBloomBit, bool* weakPa
         cout << "Enter number of users (< 100): ";
         cin >> n;
         cin.ignore();
+        if (n == "/back") {
+            page = "Main menu";
+            return;
+        }
         if (n.length() < 3 && atoi(n.c_str())) {
             break;
         }
@@ -78,8 +92,16 @@ void multipleRegistrationPage(string &page, bool* usernameBloomBit, bool* weakPa
         cout << "User " << idx + 1 << ":" << endl;
         cout << "Enter your username: ";
         getline(cin, users[idx].username);
+        if (users[idx].username == "/back") {
+            page = "Main menu";
+            return;
+        }
         cout << "Enter your password: ";
         getline(cin, users[idx].password);
+        if (users[idx].password == "/back") {
+            page = "Main menu";
+            return;
+        }
     }
     cout << "--------------------" << endl;
     for (int idx = 0; idx < stoi(n); idx++) {
@@ -96,13 +118,22 @@ void loginPage(string &page, string &token, bool* usernameBloomBit) {
     cout << "LOG IN" << endl;
     cout << "--------------------" << endl;
     cout << "Enter your username and password" << endl;
+    cout << endl << "Type /back to go back" << endl;
     
     cout << "--------------------" << endl;
     User user;
     cout << "Enter your username: ";
     getline(cin, user.username);
+    if (user.username == "/back") {
+        page = "Main menu";
+        return;
+    }
     cout << "Enter your password: ";
     getline(cin, user.password);
+    if (user.password == "/back") {
+        page = "Main menu";
+        return;
+    }
 
     if (login(user, usernameBloomBit)) {
         cout << "LOG IN SUCCESSFULLY";
@@ -118,11 +149,16 @@ void changePasswordPage(string &page, string token, bool* weakPassBloomBit) {
     cout << "Enter your new password" << endl;
     cout << "- Username must 6-9 characters, not contain space" << endl;
     cout << "- Password must 11-19 characters, not contain space, include uppercase, lowercase, numbers and special characters" << endl;
+    cout << endl << "Type /back to go back" << endl;
     
     cout << "--------------------" << endl;
     string newPassword;
     cout << "Enter new password: ";
     getline(cin, newPassword);
+    if (newPassword == "/back") {
+        page = "Main menu";
+        return;
+    }
 
     if (changePass(token, newPassword, weakPassBloomBit)) {
         cout << "CHANGE PASSWORD SUCCESSFULLY";
