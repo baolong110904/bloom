@@ -14,7 +14,11 @@ bool usernameValidate(string username, bool* usernameBloomBit) {
     return true;
 }
 
-bool passwordValidate(string password, bool* weakPassBloomBit) {
+bool passwordValidate(string password, string username, bool* weakPassBloomBit) {
+    if (password == username) {
+        cout << "Password cannot be the same as username" << endl;
+        return false;
+    }
     if (password.length() <= 10 || password.length() >= 20) {
         cout << "Password must be 11-19 characters in length" << endl;
         return false;

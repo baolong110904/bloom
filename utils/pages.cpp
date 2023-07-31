@@ -65,50 +65,33 @@ void registrationPage(string &page, bool* usernameBloomBit, bool* weakPassBloomB
 void multipleRegistrationPage(string &page, bool* usernameBloomBit, bool* weakPassBloomBit) {
     cout << "MULTIPLE REGISTRATION" << endl;
     cout << "--------------------" << endl;
-    cout << "Enter number of users" << endl;
-    cout << "Enter your username and password" << endl;
-    cout << "- Username must 6-9 characters, not contain space" << endl;
-    cout << "- Password must 11-19 characters, not contain space, include uppercase, lowercase, numbers and special characters" << endl;
-    cout << endl << "Type /back to go back" << endl;
-    
-    cout << "--------------------" << endl;
-    string n;
-    while (true) {
-        cout << "Enter number of users (< 100): ";
-        cin >> n;
-        cin.ignore();
-        if (n == "/back") {
-            page = "Main menu";
-            return;
+
+    cout << endl << "Reading SignUp.txt ..." << endl;
+
+    ifstream ifs("data/SignUp.txt");
+    if (ifs.is_open()) {
+        // Read file
+        vector <User> users;
+        while (!ifs.eof()) {
+            User newUser;
+            ifs >> newUser.username >> newUser.password;
+            users.push_back(newUser);
         }
-        if (n.length() < 3 && atoi(n.c_str())) {
-            break;
+
+        // Sign up and show result
+        cout << "--------------------" << endl;
+        if (users.size() != 0) {
+            for (int idx = 0; idx < users.size(); idx++) {
+                cout << "User " << idx + 1 << " ";
+                if (multiSignup(users.at(idx), usernameBloomBit, weakPassBloomBit)) {
+                    cout << "REGISTER SUCCESSFULLY" << endl;
+                }
+            }
+        } else {
+            cout << "No user found at data/SignUp.txt";
         }
-        cout << "Invalid number" << endl;
-    }
-    User users[stoi(n)];
-    for (int idx = 0; idx < stoi(n); idx++) {
-        cout << "--------" << endl;
-        cout << "User " << idx + 1 << ":" << endl;
-        cout << "Enter your username: ";
-        getline(cin, users[idx].username);
-        if (users[idx].username == "/back") {
-            page = "Main menu";
-            return;
-        }
-        cout << "Enter your password: ";
-        getline(cin, users[idx].password);
-        if (users[idx].password == "/back") {
-            page = "Main menu";
-            return;
-        }
-    }
-    cout << "--------------------" << endl;
-    for (int idx = 0; idx < stoi(n); idx++) {
-        cout << "User " << idx + 1 << " ";
-        if (signup(users[idx], usernameBloomBit, weakPassBloomBit)) {
-            cout << "REGISTER SUCCESSFULLY" << endl;
-        }
+    } else {
+        cout << "Cannot open file, please check data/SignUp.txt";
     }
     char pause = getch();
     page = "Main menu";

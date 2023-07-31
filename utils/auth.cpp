@@ -3,7 +3,7 @@ bool* buildUsernameBloomBit() {
     for (int i=0; i<MAX_SIZE; i++) {
         bitArray[i] = false;
     }
-    ifstream ifs("data/Signup.txt");
+    ifstream ifs("data/Account.txt");
     while (!ifs.eof()) {
         string username;
         ifs >> username;
@@ -35,14 +35,31 @@ struct User {
 };
 
 bool signup(User user, bool* usernameBloomBit, bool* weakPassBloomBit) {
-    if (usernameValidate(user.username, usernameBloomBit) && passwordValidate(user.password, weakPassBloomBit)) {
-        ofstream ofs("data/Signup.txt", ios::app);
+    if (usernameValidate(user.username, usernameBloomBit) && passwordValidate(user.password, user.username, weakPassBloomBit)) {
+        ofstream ofs("data/Account.txt", ios::app);
         if (!ofs.is_open()) {
             cout << "Something went wrong";
             return false;
         }
 
-        // Save to SignUp.txt
+        insertBloom(usernameBloomBit, user.username);
+        ofs << user.username << " " << user.password << endl;
+        ofs.close();
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool multiSignup(User user, bool* usernameBloomBit, bool* weakPassBloomBit) {
+    if (usernameValidate(user.username, usernameBloomBit) && passwordValidate(user.password, user.username, weakPassBloomBit)) {
+        ofstream ofs("data/Account.txt", ios::app);
+        if (!ofs.is_open()) {
+            cout << "Something went wrong";
+            return false;
+        }
+
+        // Save to Account.txt
         insertBloom(usernameBloomBit, user.username);
         ofs << user.username << " " << user.password << endl;
         ofs.close();
@@ -65,7 +82,7 @@ bool login(User user, bool* usernameBloomBit) {
         return false;
     }
     
-    ifstream ifs("data/SignUp.txt");
+    ifstream ifs("data/Account.txt");
     if (!ifs.is_open()) {
         cout << "Something went wrong";
         return false;
@@ -86,37 +103,36 @@ bool login(User user, bool* usernameBloomBit) {
 }
 
 bool changePass(string token, string newPassword, bool* weakPassBloomBit) {
-    if (!passwordValidate(newPassword, weakPassBloomBit)) {
+    if (!passwordValidate(newPassword, token, weakPassBloomBit)) {
         return false;
     }
 
     // Get & change data
-    ifstream ifs("data/SignUp.txt");
+    ifstream ifs("data/Account.txt");
     if (!ifs.is_open()) {
         cout << "Something went wrong";
         return false;
     }
-    User* users = new User [MAX_SIZE];
-    int idx = 0;
+    vector <User> users;
     while (true) {
-        ifs >> users[idx].username >> users[idx].password;
+        User user;
+        ifs >> user.username >> user.password;
         if (ifs.eof()) {
             break;
         }
-        if (users[idx].username == token) {
-            users[idx].password = newPassword;
+        users.push_back(user);
+        if (users.back().username == token) {
+            users.back().password = newPassword;
         }
-        idx++;
     }
     ifs.close();
 
     // Save back
-    ofstream ofs("data/SignUp.txt");
-    for (int i=0; i<idx; i++) {
-        ofs << users[i].username << " " << users[i].password << endl;
+    ofstream ofs("data/Account.txt");
+    for (int i=0; i<users.size(); i++) {
+        ofs << users.at(i).username << " " << users.at(i).password << endl;
     }
     ofs.close();
 
-    delete [] users;
     return true;
 }

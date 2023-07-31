@@ -3,6 +3,7 @@
 #include <string>
 #include <conio.h>
 #include <fstream>
+#include <vector>
 
 #define MAX_SIZE 1000
 
